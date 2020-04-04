@@ -1,5 +1,3 @@
 package com.chenfangwei.humpback.space.presenter
 
-class SpaceDTO {
-
-}
+data class SpaceDTO(val id: String, val name: String)

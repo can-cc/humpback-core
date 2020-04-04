@@ -1,8 +1,6 @@
 package com.chenfangwei.humpback.space.repository
 
-import com.chenfangwei.humpback.space.Space
+import com.chenfangwei.humpback.space.model.Space
 import org.springframework.data.mongodb.repository.MongoRepository
 
-interface SpaceRepository : MongoRepository<Space, String> {
-    fun findByID(slug: String): Space?
-}
+interface SpaceRepository : MongoRepository<Space, String> {}
