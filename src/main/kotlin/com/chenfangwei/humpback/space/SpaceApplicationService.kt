@@ -9,9 +9,10 @@ import java.util.*
 @Service
 class SpaceApplicationService(private val spaceRepository: SpaceRepository) {
 
-    fun createSpace(createSpaceCommand: CreateSpaceCommand) {
+    fun createSpace(createSpaceCommand: CreateSpaceCommand): String {
         val space = Space(createSpaceCommand.name, createSpaceCommand.userID)
         spaceRepository.save(space)
+        return space.id!!;
     }
 
     fun getSpaceDetail(spaceId: String): Optional<Space> {

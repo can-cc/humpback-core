@@ -14,11 +14,10 @@ class SpaceController(val spaceApplicationService: SpaceApplicationService) {
     @RequestMapping(value = ["/space"], method = [RequestMethod.POST], produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    fun createSpace(@RequestBody body: @Valid CreateSpaceBody, @RequestHeader("X-App-User-ID") userID: String) {
+    fun createSpace(@RequestBody body: @Valid CreateSpaceBody, @RequestHeader("X-App-User-ID") userID: String): String {
         val command = CreateSpaceCommand(body.name, userID)
-        spaceApplicationService.createSpace(command)
+        return spaceApplicationService.createSpace(command)
     }
-
 
     @RequestMapping(value = ["/space/{sid}"], method = [RequestMethod.GET], produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
