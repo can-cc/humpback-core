@@ -1,3 +1,8 @@
 package com.chenfangwei.humpback.space.presenter
 
-data class SpaceDTO(val id: String, val name: String)
+import com.chenfangwei.humpback.space.model.Space
+
+data class SpaceDTO(private val space: Space) {
+    var id: String = space.id!!
+    var name: String = space.name
+}

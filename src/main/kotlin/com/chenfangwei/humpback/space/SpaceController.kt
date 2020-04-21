@@ -6,6 +6,7 @@ import com.chenfangwei.humpback.space.presenter.SpaceDTO
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import javax.validation.Valid
 
 @RestController
@@ -19,13 +20,21 @@ class SpaceController(val spaceApplicationService: SpaceApplicationService) {
         return spaceApplicationService.createSpace(command)
     }
 
-    @RequestMapping(value = ["/space/{sid}"], method = [RequestMethod.GET], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @RequestMapping(value = ["/space/{spaceId}"], method = [RequestMethod.GET], produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    fun querySpaceDetail(@PathVariable("sid") @Valid sid: String, @RequestHeader("X-App-User-ID") @Valid userID: String): SpaceDTO {
-        val spaceOption = spaceApplicationService.getSpaceDetail(sid)
+    fun querySpaceDetail(@PathVariable("spaceId") @Valid spaceId: String, @RequestHeader("X-App-User-ID") @Valid userID: String): SpaceDTO {
+        // TODO: check space belong user
+        val spaceOption = spaceApplicationService.getSpaceDetail(spaceId)
+        if (spaceOption.isEmpty) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        }
         val space = spaceOption.get()
-        // TODO 404
-        return SpaceDTO(space.id!!, space.name)
+        return SpaceDTO(space)
+    }
+
+    @RequestMapping(value = ["/spaces"], method = [RequestMethod.GET], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun querySpaces( @RequestHeader("X-App-User-ID") @Valid userID: String): List<SpaceDTO> {
+        return spaceApplicationService.getSpaceList(userID).map { SpaceDTO(it) }
     }
 }

@@ -12,10 +12,14 @@ class SpaceApplicationService(private val spaceRepository: SpaceRepository) {
     fun createSpace(createSpaceCommand: CreateSpaceCommand): String {
         val space = Space(createSpaceCommand.name, createSpaceCommand.userID)
         spaceRepository.save(space)
-        return space.id!!;
+        return space.id!!
     }
 
     fun getSpaceDetail(spaceId: String): Optional<Space> {
        return spaceRepository.findById(spaceId)
+    }
+
+    fun getSpaceList(creatorId: String): List<Space> {
+        return spaceRepository.findByCreatorId(creatorId)
     }
 }
