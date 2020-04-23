@@ -5,6 +5,8 @@ import com.chenfangwei.humpback.space.command.CreateSpaceCommand
 import com.chenfangwei.humpback.space.presenter.SpaceDTO
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import javax.validation.Valid
@@ -34,7 +36,7 @@ class SpaceController(val spaceApplicationService: SpaceApplicationService) {
     }
 
     @RequestMapping(value = ["/spaces"], method = [RequestMethod.GET], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun querySpaces( @RequestHeader("X-App-User-ID") @Valid userID: String): List<SpaceDTO> {
-        return spaceApplicationService.getSpaceList(userID).map { SpaceDTO(it) }
+    fun querySpaces(@AuthenticationPrincipal() principal: Jwt): List<SpaceDTO> {
+        return spaceApplicationService.getSpaceList(principal.id).map { SpaceDTO(it) }
     }
 }

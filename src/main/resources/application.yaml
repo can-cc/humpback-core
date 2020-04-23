@@ -1,0 +1,16 @@
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.web.HttpLogging: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://[keycloak_host]/auth/realms/humpback_dev
+          jwk-set-uri: http://[keycloak_host]/auth/realms/humpback_dev/protocol/openid-connect/certs
