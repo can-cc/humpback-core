@@ -1,5 +1,5 @@
-FROM gradle:jdk11
+FROM maven:jdk11
 COPY . /app
 WORKDIR /app
-RUN ./gradlew build -x test
+RUN ./mvnw compile
 ENTRYPOINT ["java","-jar","/app/build/libs/humpback-latest.jar"]
