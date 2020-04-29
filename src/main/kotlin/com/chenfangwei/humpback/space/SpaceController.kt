@@ -17,16 +17,18 @@ class SpaceController(val spaceApplicationService: SpaceApplicationService) {
     @RequestMapping(value = ["/space"], method = [RequestMethod.POST], produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    fun createSpace(@RequestBody body: @Valid CreateSpaceBody, @RequestHeader("X-App-User-ID") userID: String): String {
-        val command = CreateSpaceCommand(body.name, userID)
+    fun createSpace(@RequestBody body: @Valid CreateSpaceBody, @AuthenticationPrincipal() principal: Jwt): String {
+        val userId = principal.getClaimAsString("sub")
+        val command = CreateSpaceCommand(body.name, userId)
         return spaceApplicationService.createSpace(command)
     }
 
     @RequestMapping(value = ["/space/{spaceId}"], method = [RequestMethod.GET], produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    fun querySpaceDetail(@PathVariable("spaceId") @Valid spaceId: String, @RequestHeader("X-App-User-ID") @Valid userID: String): SpaceDTO {
+    fun querySpaceDetail(@PathVariable("spaceId") @Valid spaceId: String, @AuthenticationPrincipal() principal: Jwt): SpaceDTO {
         // TODO: check space belong user
+        val userId = principal.getClaimAsString("sub")
         val spaceOption = spaceApplicationService.getSpaceDetail(spaceId)
         if (spaceOption.isEmpty) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND)
@@ -37,6 +39,7 @@ class SpaceController(val spaceApplicationService: SpaceApplicationService) {
 
     @RequestMapping(value = ["/spaces"], method = [RequestMethod.GET], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun querySpaces(@AuthenticationPrincipal() principal: Jwt): List<SpaceDTO> {
-        return spaceApplicationService.getSpaceList(principal.id).map { SpaceDTO(it) }
+        val userId = principal.getClaimAsString("sub")
+        return spaceApplicationService.getSpaceList(userId).map { SpaceDTO(it) }
     }
 }

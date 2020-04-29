@@ -1,3 +1,6 @@
+server:
+  port: 8260
+
 logging:
   level:
     root: INFO
@@ -8,6 +11,10 @@ logging:
     org.springframework.cloud.gateway: DEBUG
 
 spring:
+  data:
+    mongodb:
+      database: humpback_dev
+      port: 27017
   security:
     oauth2:
       resourceserver:
