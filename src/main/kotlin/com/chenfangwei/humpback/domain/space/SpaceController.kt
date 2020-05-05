@@ -1,8 +1,8 @@
-package com.chenfangwei.humpback.space
+package com.chenfangwei.humpback.domain.space
 
-import com.chenfangwei.humpback.space.command.CreateSpaceBody
-import com.chenfangwei.humpback.space.command.CreateSpaceCommand
-import com.chenfangwei.humpback.space.presenter.SpaceDTO
+import com.chenfangwei.humpback.domain.space.command.CreateSpaceBody
+import com.chenfangwei.humpback.domain.space.command.CreateSpaceCommand
+import com.chenfangwei.humpback.domain.space.presenter.SpaceDTO
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal

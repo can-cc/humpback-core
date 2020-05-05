@@ -1,4 +1,4 @@
-package com.chenfangwei.humpback.space.command
+package com.chenfangwei.humpback.domain.space.command
 
 import javax.validation.constraints.NotNull
 

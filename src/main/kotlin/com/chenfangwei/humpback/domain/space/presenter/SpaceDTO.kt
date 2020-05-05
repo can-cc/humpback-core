@@ -1,6 +1,6 @@
-package com.chenfangwei.humpback.space.presenter
+package com.chenfangwei.humpback.domain.space.presenter
 
-import com.chenfangwei.humpback.space.model.Space
+import com.chenfangwei.humpback.domain.space.model.Space
 
 data class SpaceDTO(private val space: Space) {
     var id: String = space.id!!

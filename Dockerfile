@@ -1,4 +1,4 @@
-FROM maven:jdk11
+FROM maven:3-openjdk-11
 COPY . /app
 WORKDIR /app
 RUN ./mvnw compile

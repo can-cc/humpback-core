@@ -1,4 +1,4 @@
-package com.chenfangwei.humpback.space.model
+package com.chenfangwei.humpback.domain.space.model
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document

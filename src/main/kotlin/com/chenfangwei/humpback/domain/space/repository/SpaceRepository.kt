@@ -1,6 +1,6 @@
-package com.chenfangwei.humpback.space.repository
+package com.chenfangwei.humpback.domain.space.repository
 
-import com.chenfangwei.humpback.space.model.Space
+import com.chenfangwei.humpback.domain.space.model.Space
 import org.springframework.data.mongodb.repository.MongoRepository
 
 interface SpaceRepository : MongoRepository<Space, String> {
