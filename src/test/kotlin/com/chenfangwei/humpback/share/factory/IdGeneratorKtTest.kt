@@ -7,7 +7,7 @@ internal class IdGeneratorKtTest {
 
     @Test
     fun generateUUID_not_null() {
-        val uuid = generateUUID()
+        val uuid = generateId()
         assertThat(uuid).isNotNull()
     }
 }

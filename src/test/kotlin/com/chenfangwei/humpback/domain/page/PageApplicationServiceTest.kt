@@ -1,6 +1,9 @@
 package com.chenfangwei.humpback.domain.page
 
+import com.chenfangwei.humpback.domain.page.command.CreatePageBlockCommand
 import com.chenfangwei.humpback.domain.page.command.CreatePageCommand
+import com.chenfangwei.humpback.domain.page.command.UpdatePageBlockCommand
+import com.chenfangwei.humpback.domain.page.command.UpdatePageCommand
 import com.chenfangwei.humpback.domain.page.model.Page
 import com.chenfangwei.humpback.domain.page.repository.PageRepository
 import com.chenfangwei.humpback.domain.space.SpaceApplicationService
@@ -43,9 +46,52 @@ internal class PageApplicationServiceTest(@Autowired pageRepository: PageReposit
         page2.title = "Page2"
         pageRepository.save(page1)
         pageRepository.save(page2)
-        val pages = this.pageApplicationService.queryPageList(space.id!!, "user_111")
+        val pages = this.pageApplicationService.pageList(space.id!!, "user_111")
         assertThat(pages.map { p -> p.title }).isEqualTo(listOf("Page1", "Page2"))
 
-        assertThrows<ForbiddenException> { -> this.pageApplicationService.queryPageList(space.id!!, "user_112") }
+        assertThrows<ForbiddenException> { -> this.pageApplicationService.pageList(space.id!!, "user_112") }
+    }
+
+    @Test
+    fun updatePage(@Autowired pageRepository: PageRepository, @Autowired spaceRepository: SpaceRepository) {
+        val space = Space("space_banana", "user_10_1")
+        spaceRepository.save(space)
+        val page = Page("user_10_1", space.id!!)
+        page.title = ""
+        pageRepository.save(page)
+        val command = UpdatePageCommand(page.id!!, space.id!!, "你好")
+        command.userId = "user_10_1"
+        pageApplicationService.updatePage(command)
+        val updatedPage = pageRepository.findById(page.id!!).get()
+        assertThat(updatedPage.title).isEqualTo("你好")
+    }
+
+    @Test
+    fun createPageBlock(@Autowired pageRepository: PageRepository, @Autowired spaceRepository: SpaceRepository) {
+        val space = Space("space_banana2", "user_101_1")
+        spaceRepository.save(space)
+        val page = Page("user_101_1", space.id!!)
+        page.title = "test"
+        pageRepository.save(page)
+        val command = CreatePageBlockCommand(space.id!!, page.id!!, "first block")
+        command.userId  = "user_101_1"
+        pageApplicationService.createPageBlock(command)
+        val updatedPage = pageRepository.findById(page.id!!).get()
+        assertThat(updatedPage.blocks!![0].content).isEqualTo("first block")
+    }
+
+    @Test
+    fun updatePageBlock(@Autowired pageRepository: PageRepository, @Autowired spaceRepository: SpaceRepository) {
+        val space = Space("space_banana2", "user_101_2")
+        spaceRepository.save(space)
+        val page = Page("user_101_2", space.id!!)
+        page.title = "test"
+        page.addBlockContent("hi hi")
+        pageRepository.save(page)
+        val command = UpdatePageBlockCommand(space.id!!, page.id!!, page.blocks!![0].id, "h2")
+        command.userId = "user_101_2"
+        pageApplicationService.updatePageBlock(command)
+        val updatedPage = pageRepository.findById(page.id!!).get()
+        assertThat(updatedPage.blocks!![0].content).isEqualTo("h2")
     }
 }

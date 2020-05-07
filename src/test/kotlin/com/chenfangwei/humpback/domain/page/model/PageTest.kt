@@ -1,9 +1,8 @@
 package com.chenfangwei.humpback.domain.page.model
 
 import com.chenfangwei.humpback.domain.page.exception.InvalidPageOperationException
-import org.junit.jupiter.api.Test
-
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 
@@ -26,5 +25,15 @@ internal class PageTest {
         assertThat(page.blocks!![1].content).isEqualTo("end")
 
         assertThrows<InvalidPageOperationException> { -> page.addBlockContent("exception", "invalid id")}
+    }
+
+    @Test
+    fun updateBlock() {
+        val page = Page("creator_id_123_update_block", "page_id_123")
+        page.addBlockContent("hi")
+        page.updateBlock(page.blocks!![0].id, "hello")
+        assertThat(page.blocks!![0].content).isEqualTo("hello")
+
+        assertThrows<InvalidPageOperationException> { -> page.updateBlock("not_exist_id", "hello") }
     }
 }
