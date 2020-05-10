@@ -1,9 +1,6 @@
 package com.chenfangwei.humpback.domain.page
 
-import com.chenfangwei.humpback.domain.page.command.CreatePageBlockCommand
-import com.chenfangwei.humpback.domain.page.command.CreatePageCommand
-import com.chenfangwei.humpback.domain.page.command.UpdatePageBlockCommand
-import com.chenfangwei.humpback.domain.page.command.UpdatePageCommand
+import com.chenfangwei.humpback.domain.page.command.*
 import com.chenfangwei.humpback.domain.page.model.Page
 import com.chenfangwei.humpback.domain.page.repository.PageRepository
 import com.chenfangwei.humpback.domain.space.SpaceApplicationService
@@ -40,11 +37,16 @@ class PageApplicationService(private val pageRepository: PageRepository, private
         pageRepository.save(page)
     }
 
-    fun createPageBlock(createPageBlockCommand: CreatePageBlockCommand): String {
-        val page = findPageAndCheckPermission(createPageBlockCommand.userId, createPageBlockCommand.spaceId, createPageBlockCommand.pageId)
-        page.addBlockContent(createPageBlockCommand.content)
+    fun createPageBlock(command: CreatePageBlockCommand): String {
+        val page = findPageAndCheckPermission(command.userId, command.spaceId, command.pageId)
+        var blockId: String
+        blockId = if (command.previousBlockId != null) {
+            page.addBlockContent(command.content, command.previousBlockId!!)
+        } else {
+            page.addBlockContent(command.content)
+        }
         pageRepository.save(page)
-        return page.id!!
+        return blockId
     }
 
     fun updatePageBlock(command: UpdatePageBlockCommand) {
@@ -52,6 +54,14 @@ class PageApplicationService(private val pageRepository: PageRepository, private
         page.updateBlock(command.blockId, command.content)
         pageRepository.save(page)
     }
+
+
+    fun resortPageBlock(command: ResortPageBlockCommand) {
+        val page = findPageAndCheckPermission(command.userId, command.spaceId, command.pageId)
+        page.resortBlocks(command.blockIds)
+        pageRepository.save(page)
+    }
+
 
     private fun findPageAndCheckPermission(userId: String, spaceId: String, pageId: String): Page {
         if (!spaceApplicationService.checkUserCanWriteSpace(userId, spaceId)) {

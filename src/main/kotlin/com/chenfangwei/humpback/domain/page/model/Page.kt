@@ -20,18 +20,22 @@ class Page(val creatorId: String, val spaceId: String) {
     @CreatedDate
     private val createdDate: Date? = null
 
-    fun addBlockContent(content: String, previousBlockId: String) {
+    fun addBlockContent(content: String, previousBlockId: String): String {
         val lastBlockIndex = blocks!!.indexOfFirst { b -> b.id == previousBlockId }
         if (lastBlockIndex < 0) {
             throw InvalidPageOperationException("Previous block not found")
 
         }
-        val block = PageBlock(generateId(), content)
+        val blockId = generateId()
+        val block = PageBlock(blockId, content)
         addBlock(block, lastBlockIndex)
+        return blockId
     }
 
-    fun addBlockContent(content: String) {
-        addBlock(PageBlock(generateId(), content), null)
+    fun addBlockContent(content: String): String {
+        val blockId = generateId()
+        addBlock(PageBlock(blockId, content), null)
+        return blockId
     }
 
     fun addBlock(block: PageBlock, lastBlockIndex: Int?) {
@@ -46,9 +50,16 @@ class Page(val creatorId: String, val spaceId: String) {
         }
     }
 
-    fun updateBlock(blockId:String, content: String) {
+    fun updateBlock(blockId: String, content: String) {
         val block = findBlock(blockId) ?: throw InvalidPageOperationException("block not found")
         block.content = content
+    }
+
+    fun resortBlocks(blockIds: ArrayList<String>) {
+        if (this.blocks == null) {
+            throw InvalidPageOperationException("page blocks is null")
+        }
+        this.blocks!!.sortWith(Comparator<PageBlock> { o1, o2 -> blockIds.indexOf(o1.id) - blockIds.indexOf(o2.id) })
     }
 
     private fun findBlock(blockId: String): PageBlock? {

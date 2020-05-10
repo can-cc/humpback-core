@@ -1,9 +1,6 @@
 package com.chenfangwei.humpback.domain.page
 
-import com.chenfangwei.humpback.domain.page.command.CreatePageBlockCommand
-import com.chenfangwei.humpback.domain.page.command.CreatePageCommand
-import com.chenfangwei.humpback.domain.page.command.UpdatePageBlockCommand
-import com.chenfangwei.humpback.domain.page.command.UpdatePageCommand
+import com.chenfangwei.humpback.domain.page.command.*
 import com.chenfangwei.humpback.domain.page.presenter.PageDTO
 import com.chenfangwei.humpback.domain.page.presenter.PageDetailDTO
 import org.springframework.http.HttpStatus
@@ -44,7 +41,7 @@ class PageController(private val pageApplicationService: PageApplicationService)
         pageApplicationService.updatePage(command)
     }
 
-    @RequestMapping(value = ["/page/{pageId}/block"], method = [RequestMethod.POST], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @RequestMapping(value = ["/page/{pageId}/block"], method = [RequestMethod.POST])
     @ResponseStatus(HttpStatus.CREATED)
     fun createPageBlock(@PathVariable("pageId") @Valid pageId: String, @RequestBody command: @Valid CreatePageBlockCommand, @AuthenticationPrincipal principal: Jwt): String {
         val userId = principal.getClaimAsString("sub")
@@ -57,5 +54,12 @@ class PageController(private val pageApplicationService: PageApplicationService)
         val userId = principal.getClaimAsString("sub")
         command.userId = userId
         pageApplicationService.updatePageBlock(command)
+    }
+
+    @RequestMapping(value = ["/page/{pageId}/blocks/resort"], method = [RequestMethod.POST])
+    fun resortPageBlock(@RequestBody command: @Valid ResortPageBlockCommand, @AuthenticationPrincipal() principal: Jwt) {
+        val userId = principal.getClaimAsString("sub")
+        command.userId = userId
+        pageApplicationService.resortPageBlock(command)
     }
 }

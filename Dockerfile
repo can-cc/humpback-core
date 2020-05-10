@@ -1,5 +1,6 @@
 FROM maven:3-openjdk-11
 COPY . /app
 WORKDIR /app
-RUN ./mvnw compile
-ENTRYPOINT ["java","-jar","/app/build/libs/humpback-latest.jar"]
+RUN ./mvnw clean install
+RUN ./mvnw package
+ENTRYPOINT ["java","-jar","/app/target/humbpack.jar"]

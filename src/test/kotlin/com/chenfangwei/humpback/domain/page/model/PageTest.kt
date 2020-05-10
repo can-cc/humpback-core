@@ -36,4 +36,12 @@ internal class PageTest {
 
         assertThrows<InvalidPageOperationException> { -> page.updateBlock("not_exist_id", "hello") }
     }
+
+    @Test
+    fun resortBlocks() {
+        val page = Page("creator_id_123_update_block", "page_id_123")
+        page.blocks = arrayListOf(PageBlock("1", ""), PageBlock("2", ""), PageBlock("3", ""))
+        page.resortBlocks(arrayListOf("2", "3", "1"))
+        assertThat(page.blocks!!.map { b-> b.id}.joinToString("")).isEqualTo("231")
+    }
 }
