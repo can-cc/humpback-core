@@ -3,4 +3,4 @@ COPY . /app
 WORKDIR /app
 RUN ./mvnw clean install
 RUN ./mvnw package
-ENTRYPOINT ["java","-jar","/app/target/humbpack.jar"]
+ENTRYPOINT ["java","-jar","/app/target/humpback-latest.jar"]
