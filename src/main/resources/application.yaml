@@ -13,6 +13,7 @@ logging:
 spring:
   data:
     mongodb:
+      host: localhost
       database: humpback_dev
       port: 27017
   security:
