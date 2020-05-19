@@ -29,11 +29,7 @@ class SpaceController(val spaceApplicationService: SpaceApplicationService) {
     fun querySpaceDetail(@PathVariable("spaceId") @Valid spaceId: String, @AuthenticationPrincipal() principal: Jwt): SpaceDTO {
         // TODO: check space belong user
         val userId = principal.getClaimAsString("sub")
-        val spaceOption = spaceApplicationService.getSpaceDetail(spaceId)
-        if (spaceOption.isEmpty) {
-            throw ResponseStatusException(HttpStatus.NOT_FOUND)
-        }
-        val space = spaceOption.get()
+        val space = spaceApplicationService.getSpaceDetail(spaceId)
         return SpaceDTO(space)
     }
 

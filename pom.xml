@@ -11,7 +11,7 @@
 	<groupId>com.chenfangwei</groupId>
 	<artifactId>humpback</artifactId>
 	<version>latest</version>
-	<name>humpback</name>
+	<name>humpback-core</name>
 	<description>humpback</description>
 
 	<properties>
