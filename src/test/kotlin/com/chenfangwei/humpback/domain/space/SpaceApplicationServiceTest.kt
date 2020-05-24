@@ -12,11 +12,7 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest
 
 @DataMongoTest
 internal class SpaceApplicationServiceTest(@Autowired spaceRepository: SpaceRepository) {
-    private var spaceApplicationService: SpaceApplicationService
-
-    init {
-        this.spaceApplicationService = SpaceApplicationService(spaceRepository)
-    }
+    private var spaceApplicationService: SpaceApplicationService = SpaceApplicationService(spaceRepository)
 
     @Test
     fun createSpace(@Autowired spaceRepository: SpaceRepository) {
@@ -30,7 +26,7 @@ internal class SpaceApplicationServiceTest(@Autowired spaceRepository: SpaceRepo
     @Test
     fun getSpaceDetail(@Autowired spaceRepository: SpaceRepository) {
         val space = spaceRepository.save(Space("name_ganze", "user_id_ganze_123"))
-        val receivedSpace = spaceApplicationService.getSpaceDetail(space.id!!).get()
+        val receivedSpace = spaceApplicationService.getSpaceDetail(space.id!!)
         assertThat(receivedSpace.name).isEqualTo("name_ganze")
         assertThat(receivedSpace.creatorId).isEqualTo("user_id_ganze_123")
     }
