@@ -3,15 +3,20 @@ package com.chenfangwei.humpback.domain.page
 import com.chenfangwei.humpback.domain.page.command.*
 import com.chenfangwei.humpback.domain.page.presenter.PageDTO
 import com.chenfangwei.humpback.domain.page.presenter.PageDetailDTO
+import com.chenfangwei.humpback.share.exception.BadRequestException
+import com.chenfangwei.humpback.storage.StorageService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartHttpServletRequest
+import java.io.ByteArrayInputStream
 import javax.validation.Valid
 
+
 @RestController
-class PageController(private val pageApplicationService: PageApplicationService) {
+class PageController(private val pageApplicationService: PageApplicationService, private val storageService: StorageService) {
 
     @RequestMapping(value = ["/page"], method = [RequestMethod.POST], produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseStatus(HttpStatus.CREATED)
@@ -57,9 +62,19 @@ class PageController(private val pageApplicationService: PageApplicationService)
     }
 
     @RequestMapping(value = ["/page/{pageId}/blocks/resort"], method = [RequestMethod.POST])
-    fun resortPageBlock(@RequestBody command: @Valid ResortPageBlockCommand, @AuthenticationPrincipal() principal: Jwt) {
+    fun resortPageBlock(@RequestBody command: @Valid ResortPageBlockCommand, @AuthenticationPrincipal() principal: Jwt, @PathVariable pageId: String) {
         val userId = principal.getClaimAsString("sub")
         command.userId = userId
         pageApplicationService.resortPageBlock(command)
+    }
+
+    @RequestMapping(value = ["/page/{pageId}/block/image"], method = [RequestMethod.POST])
+    fun Upload(request: MultipartHttpServletRequest, @PathVariable pageId: String): String {
+        val multipartFile = request.getFile("data")
+        if (multipartFile != null) {
+            return storageService.saveObject(ByteArrayInputStream(multipartFile.bytes), multipartFile.contentType)
+        } else {
+            throw BadRequestException()
+        }
     }
 }

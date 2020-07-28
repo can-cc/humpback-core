@@ -3,5 +3,5 @@ package com.chenfangwei.humpback.share.exception
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 
-@ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "not found")
-class EntityNotFoundException(message: String = "not found") : Exception(message)
+@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "bad request")
+class BadRequestException(message: String = "bad request") : Exception(message)

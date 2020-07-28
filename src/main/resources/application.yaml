@@ -22,3 +22,12 @@ spring:
         jwt:
           issuer-uri: http://[keycloak_host]/auth/realms/humpback_dev
           jwk-set-uri: http://[keycloak_host]/auth/realms/humpback_dev/protocol/openid-connect/certs
+
+
+storage:
+  minio:
+    endpoint: http://localhost:9000
+    accesskey: minio
+    secretkey: miniostorage
+    buckets:
+      image: octopus-image
