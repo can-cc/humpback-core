@@ -1,7 +1,9 @@
 package com.chenfangwei.humpback.domain.page
 
 import com.chenfangwei.humpback.domain.page.command.*
+import com.chenfangwei.humpback.domain.page.model.BlockType
 import com.chenfangwei.humpback.domain.page.model.Page
+import com.chenfangwei.humpback.domain.page.model.block.BlockFactory
 import com.chenfangwei.humpback.domain.page.repository.PageRepository
 import com.chenfangwei.humpback.domain.space.SpaceApplicationService
 import com.chenfangwei.humpback.share.exception.EntityNotFoundException
@@ -9,7 +11,9 @@ import com.chenfangwei.humpback.share.exception.ForbiddenException
 import org.springframework.stereotype.Service
 
 @Service
-class PageApplicationService(private val pageRepository: PageRepository, private val spaceApplicationService: SpaceApplicationService) {
+class PageApplicationService(private val pageRepository: PageRepository,
+                             private val spaceApplicationService: SpaceApplicationService,
+                             private val blockFactory: BlockFactory) {
 
     fun createPage(command: CreatePageCommand): String {
         val page = Page(command.creatorId, command.spaceId)
@@ -39,14 +43,10 @@ class PageApplicationService(private val pageRepository: PageRepository, private
 
     fun createPageBlock(command: CreatePageBlockCommand): String {
         val page = findPageAndCheckPermission(command.userId, command.spaceId, command.pageId)
-        var blockId: String
-        blockId = if (command.previousBlockId != null) {
-            page.addBlockContent(command.content, command.previousBlockId!!)
-        } else {
-            page.addBlockContent(command.content)
-        }
+        val block = blockFactory.createBlock(BlockType.Html, command.content)
+        page.addBlock(block, command.previousBlockId)
         pageRepository.save(page)
-        return blockId
+        return block.id
     }
 
     fun updatePageBlock(command: UpdatePageBlockCommand) {

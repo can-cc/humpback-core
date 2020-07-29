@@ -30,4 +30,4 @@ storage:
     accesskey: minio
     secretkey: miniostorage
     buckets:
-      image: octopus-image
+      image: humpback-image
