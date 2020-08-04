@@ -13,6 +13,6 @@ class StorageController(private val storageService: StorageService) {
         val input = storageService.receiveObject(objectId) ?: throw EntityNotFoundException()
         val headers = HttpHeaders()
         headers.cacheControl = CacheControl.maxAge(Duration.ofHours(24 * 30)).headerValue
-        return ResponseEntity<ByteArray>(input.readBytes(), headers, HttpStatus.OK)
+        return ResponseEntity(input.readBytes(), headers, HttpStatus.OK)
     }
 }

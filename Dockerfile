@@ -1,4 +1,4 @@
-FROM maven:3-openjdk-11
+FROM maven:3.6.3-jdk-14
 COPY . /app
 WORKDIR /app
 RUN mvn package
