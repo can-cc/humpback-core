@@ -1,7 +1,6 @@
 package com.chenfangwei.humpback.domain.page
 
 import com.chenfangwei.humpback.domain.page.command.*
-import com.chenfangwei.humpback.domain.page.model.BlockType
 import com.chenfangwei.humpback.domain.page.model.Page
 import com.chenfangwei.humpback.domain.page.model.block.BlockFactory
 import com.chenfangwei.humpback.domain.page.repository.PageRepository
@@ -43,7 +42,7 @@ class PageApplicationService(private val pageRepository: PageRepository,
 
     fun createPageBlock(command: CreatePageBlockCommand): String {
         val page = findPageAndCheckPermission(command.userId, command.spaceId, command.pageId)
-        val block = blockFactory.createBlock(BlockType.Html, command.content)
+        val block = blockFactory.createBlock(command.blockType, command.content)
         page.addBlock(block, command.previousBlockId)
         pageRepository.save(page)
         return block.id

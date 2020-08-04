@@ -1,8 +1,7 @@
 package com.chenfangwei.humpback.domain.page.model
 
 import com.chenfangwei.humpback.domain.page.exception.InvalidPageOperationException
-import com.chenfangwei.humpback.domain.page.model.block.HtmlBlock
-import com.chenfangwei.humpback.share.factory.generateId
+import com.chenfangwei.humpback.domain.page.model.block.PageBlock
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
@@ -16,7 +15,7 @@ class Page(val creatorId: String, val spaceId: String) {
 
     var title: String? = null
 
-    var blocks: ArrayList<PageBlock>? = null
+    var blocks: ArrayList<PageBlock> = arrayListOf()
 
     @CreatedDate
     private val createdDate: Date? = null
@@ -31,9 +30,9 @@ class Page(val creatorId: String, val spaceId: String) {
                 blocks = arrayListOf(block)
                 return
             }
-            blocks!!.add(lastBlockIndex + 1, block)
+            blocks.add(lastBlockIndex + 1, block)
         } else {
-            blocks!!.add(block)
+            blocks.add(block)
         }
     }
 

@@ -1,6 +1,7 @@
 package com.chenfangwei.humpback.domain.page
 
 import com.chenfangwei.humpback.domain.page.command.*
+import com.chenfangwei.humpback.domain.page.model.block.BlockType
 import com.chenfangwei.humpback.domain.page.presenter.PageDTO
 import com.chenfangwei.humpback.domain.page.presenter.PageDetailDTO
 import com.chenfangwei.humpback.share.exception.BadRequestException
@@ -28,7 +29,7 @@ class PageController(private val pageApplicationService: PageApplicationService,
 
     @RequestMapping(value = ["/space/{spaceId}/pages"], method = [RequestMethod.GET], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun queryPages(@PathVariable("spaceId") @Valid spaceId: String, @AuthenticationPrincipal() principal: Jwt): List<PageDTO> {
-        val userId = principal.getClaimAsString("sub")
+        val userId = principal.getClaimAsString("user_id")
         return pageApplicationService.pageList(spaceId, userId).map { PageDTO(it) }
     }
 
@@ -51,6 +52,7 @@ class PageController(private val pageApplicationService: PageApplicationService,
     fun createPageBlock(@PathVariable("pageId") @Valid pageId: String, @RequestBody command: @Valid CreatePageBlockCommand, @AuthenticationPrincipal principal: Jwt): String {
         val userId = principal.getClaimAsString("sub")
         command.userId = userId
+        command.blockType = BlockType.Html
         return pageApplicationService.createPageBlock(command)
     }
 
@@ -69,12 +71,15 @@ class PageController(private val pageApplicationService: PageApplicationService,
     }
 
     @RequestMapping(value = ["/page/{pageId}/block/image"], method = [RequestMethod.POST])
-    fun Upload(request: MultipartHttpServletRequest, @PathVariable pageId: String): String {
-        val multipartFile = request.getFile("data")
-        if (multipartFile != null) {
-            return storageService.saveObject(ByteArrayInputStream(multipartFile.bytes), multipartFile.contentType)
-        } else {
-            throw BadRequestException()
-        }
+    fun uploadPageImage(request: MultipartHttpServletRequest, @PathVariable pageId: String, @AuthenticationPrincipal() principal: Jwt): String {
+        val userId = principal.getClaimAsString("user_id")
+        val multipartFile = request.getFile("data") ?: throw BadRequestException()
+        val spaceId = request.getParameter("spaceId") ?: throw BadRequestException()
+        val previousBlockId = request.getParameter("previousBlockId")
+        val imageUri = storageService.saveObject(ByteArrayInputStream(multipartFile.bytes), multipartFile.contentType)
+        val command = CreatePageBlockCommand(spaceId, pageId, imageUri, previousBlockId)
+        command.userId = userId
+        command.blockType = BlockType.Image
+        return pageApplicationService.createPageBlock(command)
     }
 }
