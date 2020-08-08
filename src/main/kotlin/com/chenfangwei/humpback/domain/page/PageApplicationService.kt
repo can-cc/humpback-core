@@ -29,11 +29,11 @@ class PageApplicationService(private val pageRepository: PageRepository,
     }
 
     fun pageDetail(spaceId: String, pageId: String, userId: String): Page {
-        return findPageAndCheckPermission(userId, spaceId, pageId)
+        return findPageAndCheckPermission(userId, pageId)
     }
 
     fun updatePage(command: UpdatePageCommand) {
-        val page = findPageAndCheckPermission(command.userId, command.spaceId, command.pageId)
+        val page = findPageAndCheckPermission(command.userId, command.pageId)
         if (command.title != null) {
             page.title = command.title
         }
@@ -41,7 +41,7 @@ class PageApplicationService(private val pageRepository: PageRepository,
     }
 
     fun createPageBlock(command: CreatePageBlockCommand): String {
-        val page = findPageAndCheckPermission(command.userId, command.spaceId, command.pageId)
+        val page = findPageAndCheckPermission(command.userId,  command.pageId)
         val block = blockFactory.createBlock(command.blockType, command.content)
         page.addBlock(block, command.previousBlockId)
         pageRepository.save(page)
@@ -49,25 +49,26 @@ class PageApplicationService(private val pageRepository: PageRepository,
     }
 
     fun updatePageBlock(command: UpdatePageBlockCommand) {
-        val page = findPageAndCheckPermission(command.userId, command.spaceId, command.pageId)
+        val page = findPageAndCheckPermission(command.userId,  command.pageId)
         page.updateBlock(command.blockId, command.content)
         pageRepository.save(page)
     }
 
 
     fun resortPageBlock(command: ResortPageBlockCommand) {
-        val page = findPageAndCheckPermission(command.userId, command.spaceId, command.pageId)
+        val page = findPageAndCheckPermission(command.userId, command.pageId)
         page.resortBlocks(command.blockIds)
         pageRepository.save(page)
     }
 
+    fun deletePageBlock(pageId: String, blockId: String, userId: String) {
+        val page = findPageAndCheckPermission(userId, pageId);
+        page.deleteBlock(blockId)
+    }
 
-    private fun findPageAndCheckPermission(userId: String, spaceId: String, pageId: String): Page {
-        if (!spaceApplicationService.checkUserCanWriteSpace(userId, spaceId)) {
-            throw ForbiddenException("forbidden access space pages")
-        }
+    private fun findPageAndCheckPermission(userId: String, pageId: String): Page {
         val page = pageRepository.findById(pageId).orElseThrow { -> EntityNotFoundException("page not found") }
-        if (page.spaceId != spaceId) {
+        if (!spaceApplicationService.checkUserCanWriteSpace(userId, page.spaceId)) {
             throw ForbiddenException("forbidden access space pages")
         }
         return page

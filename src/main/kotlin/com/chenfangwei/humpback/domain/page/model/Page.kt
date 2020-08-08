@@ -5,6 +5,7 @@ import com.chenfangwei.humpback.domain.page.model.block.PageBlock
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
+import java.lang.Exception
 import java.util.*
 
 
@@ -39,6 +40,11 @@ class Page(val creatorId: String, val spaceId: String) {
     fun updateBlock(blockId: String, content: String) {
         val block = findBlock(blockId) ?: throw InvalidPageOperationException("block not found")
         block.content = content
+    }
+
+    fun deleteBlock(blockId: String) {
+        val block = findBlock(blockId) ?: throw Exception("block not found")
+        blocks.remove(block)
     }
 
     fun resortBlocks(blockIds: ArrayList<String>) {

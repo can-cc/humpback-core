@@ -82,4 +82,10 @@ class PageController(private val pageApplicationService: PageApplicationService,
         command.blockType = BlockType.Image
         return pageApplicationService.createPageBlock(command)
     }
+
+    @RequestMapping(value = ["/page/{pageId}/block/{blockId}"], method = [RequestMethod.DELETE])
+    fun deletePageBlock(@AuthenticationPrincipal() principal: Jwt, @PathVariable pageId: String, @PathVariable blockId: String) {
+        val userId = principal.getClaimAsString("user_id")
+        pageApplicationService.deletePageBlock(pageId, blockId, userId)
+    }
 }
