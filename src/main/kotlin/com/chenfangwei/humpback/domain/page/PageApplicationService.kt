@@ -64,6 +64,7 @@ class PageApplicationService(private val pageRepository: PageRepository,
     fun deletePageBlock(pageId: String, blockId: String, userId: String) {
         val page = findPageAndCheckPermission(userId, pageId);
         page.deleteBlock(blockId)
+        pageRepository.save(page)
     }
 
     private fun findPageAndCheckPermission(userId: String, pageId: String): Page {
